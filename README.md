@@ -66,3 +66,31 @@ If I want 9 9's of certainty,
 So jackpot odds of a little better than 1 in 5 million.
 
 A quick look at those odds suggests obvious averages for when the jackpot will be hit, and it's in high hundreds of thousands of ETH.  However, knowing statistics over large numbers tends to be finicky and weird, I'll come back later with some math of actual averages.  Also, coded simulations, possibly in python because I don't really want to launch eclipse every time I want to run or update this thing.
+
+-----
+
+I ran the numbers a couple weeks ago, just now uploading them cause I just got time.  Turns out my initial numbers were bad, they ended up giving an EV of over 1.  The new calculated numbers are below.
+
+ - multiplier - odds - cumulative odds used in the code
+ - 2x - 10% - 19.1% plus jackpot odds
+ - 3x - 5% - 9.1% plus jackpot odds
+ - 5x - 3% - 4.1% plus jackpot odds
+ - 10x - 1% - 1.1% plus jackpot odds
+ - 100x - .1% - .1% plus jackpot odds
+ 
+Which gives us 2(.1)+3(.05)+5(.03)+10(.01)+100(.001)=.7 EV, just from the set payouts.  It should be noted that the cumulative odds of a Powerball win, a very popular lottery, is 1 in 24ish, which is just better than 4%.  The EV is also quite small.  I forget the exact number there, but it's fairly easily calculable if you go to their site.
+
+Putting in a jackpot of .25 of every ticket, that leaves .05, or 5%, for the DAO.
+
+Jackpot numbers again, this time using a ticket price of .1 Eth (again) and the jackpot gets .025 Eth/ticket, so
+ - m = .000000001
+ - n = 400,000,000
+ - x = 19,301,977.4735
+ 
+So jackpot odds of 1 in 19 million at max.
+
+Brainstorming on random number generation, we're not in a particular hurry here.  We could probably set the random number to be the hash of the 6 or whatever consecutive bitcoin blocks after the end of the lottery's current segment.  So, weekly drawings, and it takes an hour-ish to generate the random numbers.  That doesn't seem like a big deal.  In this scenario, I'm not envisioning numbers like Powerball's number drawings.  I'm thinking a random number per ticket, with the given odds above.  So, hashes of consecutive bitcoin blocks to get a large stream of random numbers.  Split that up into a seed per ticket, and generate the random number of each ticket from those seeds.  Consecutive bitcoin blocks makes it significantly harder to game the system. After that, each ticket has a certain chance of getting the jackpot or a payout, or nothing.  There can be multiple jackpot winners.
+
+Now, there are pros and cons to this build.  A con is you can't buy multiple tickets with the same set of numbers, as you can in Powerball.  So you can't bet more than the ticket price on a given random number.  The pro exchange for that is pretty big though. It allows us to be nearly guaranteed to pay out the rewards.  If you could bet a large amount on a single random number and win big with that number, you could easily clean the house and still put the lottery into debt.  That's not a thing we can handle, and this eliminates that possibility.
+
+Again, everything possible in variables, so having the method of random number generation be a variable means we could change that later without going through a huge contract update. I'd like to have the Lottery contract run by a multisig, as it requires a faster reaction time than the DAO is capable of.  Say, a multisig of people who designed the lottery mixed with some trusted members of the DAO.  With the DAO being given the ability to remove people from the multisig, and maybe add them.  Maybe give the DAO the sole ability to do that?  Idk.  Needs discussion.
